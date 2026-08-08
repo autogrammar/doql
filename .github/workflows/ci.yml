@@ -23,6 +23,7 @@ jobs:
       - name: Install doql (editable) + plugins + dev deps
         run: |
           pip install -e ".[dev,api,lsp,device-adopt]"
+          pip install -e ./plugins/doql-plugin-shared
           pip install -e ./plugins/doql-plugin-gxp
           pip install -e ./plugins/doql-plugin-iso17025
           pip install -e ./plugins/doql-plugin-fleet
@@ -49,6 +50,7 @@ jobs:
       - name: Install doql + plugins
         run: |
           pip install -e ".[dev,api]"
+          pip install -e ./plugins/doql-plugin-shared
           pip install -e ./plugins/doql-plugin-gxp
           pip install -e ./plugins/doql-plugin-iso17025
           pip install -e ./plugins/doql-plugin-fleet
@@ -92,7 +94,7 @@ jobs:
 
       - name: Build all plugins
         run: |
-          for p in gxp iso17025 fleet erp; do
+          for p in shared gxp iso17025 fleet erp; do
             (cd plugins/doql-plugin-$p && python -m build)
           done
 
@@ -101,6 +103,7 @@ jobs:
           python -m venv /tmp/verify
           /tmp/verify/bin/pip install \
             dist/*.whl \
+            plugins/doql-plugin-shared/dist/*.whl \
             plugins/doql-plugin-gxp/dist/*.whl \
             plugins/doql-plugin-iso17025/dist/*.whl \
             plugins/doql-plugin-fleet/dist/*.whl \

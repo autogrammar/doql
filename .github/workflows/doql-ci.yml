@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install doql
-        run: pip install doql
+        run: pip install -e .
       - name: Validate
         run: doql validate
       - name: Build
@@ -42,7 +42,7 @@ jobs:
           python-version: "3.12"
       - name: Install doql & build
         run: |
-          pip install doql
+          pip install -e .
           doql build --force
       - name: Install API deps
         run: |
@@ -74,7 +74,7 @@ jobs:
           python-version: "3.12"
       - name: Install doql & build
         run: |
-          pip install doql
+          pip install -e .
           doql build --force
       - name: Install web deps
         run: |

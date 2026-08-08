@@ -898,24 +898,14 @@ deploy = [
     { name = "redeploy" },
 ]
 dev = [
-    { name = "cli2doql" },
     { name = "costs" },
-    { name = "doql-plugin-erp" },
-    { name = "doql-plugin-fleet" },
-    { name = "doql-plugin-gxp" },
-    { name = "doql-plugin-iso17025" },
-    { name = "doql-plugin-shared" },
-    { name = "dsl2doql" },
     { name = "goal" },
-    { name = "mcp2doql" },
     { name = "mypy" },
-    { name = "nlp2doql" },
     { name = "pfix" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
     { name = "pytest-cov" },
     { name = "ruff" },
-    { name = "uri2doql" },
 ]
 device-adopt = [
     { name = "op3" },
@@ -957,17 +947,10 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "alembic", marker = "extra == 'api'", specifier = ">=1.13" },
-    { name = "cli2doql", marker = "extra == 'dev'", editable = "packages/cli2doql" },
     { name = "cli2doql", marker = "extra == 'tooling'", editable = "packages/cli2doql" },
     { name = "click", specifier = ">=8.1" },
     { name = "costs", specifier = ">=0.1.20" },
     { name = "costs", marker = "extra == 'dev'", specifier = ">=0.1.20" },
-    { name = "doql-plugin-erp", marker = "extra == 'dev'", editable = "plugins/doql-plugin-erp" },
-    { name = "doql-plugin-fleet", marker = "extra == 'dev'", editable = "plugins/doql-plugin-fleet" },
-    { name = "doql-plugin-gxp", marker = "extra == 'dev'", editable = "plugins/doql-plugin-gxp" },
-    { name = "doql-plugin-iso17025", marker = "extra == 'dev'", editable = "plugins/doql-plugin-iso17025" },
-    { name = "doql-plugin-shared", marker = "extra == 'dev'", editable = "plugins/doql-plugin-shared" },
-    { name = "dsl2doql", marker = "extra == 'dev'", editable = "packages/dsl2doql" },
     { name = "dsl2doql", marker = "extra == 'tooling'", editable = "packages/dsl2doql" },
     { name = "fastapi", marker = "extra == 'api'", specifier = ">=0.104" },
     { name = "goal", specifier = ">=2.1.0" },
@@ -975,10 +958,8 @@ requires-dist = [
     { name = "httpx", specifier = ">=0.25" },
     { name = "jinja2", specifier = ">=3.1" },
     { name = "lsprotocol", marker = "extra == 'lsp'", specifier = ">=2023.0.1" },
-    { name = "mcp2doql", marker = "extra == 'dev'", editable = "packages/mcp2doql" },
     { name = "mcp2doql", marker = "extra == 'tooling'", editable = "packages/mcp2doql" },
     { name = "mypy", marker = "extra == 'dev'" },
-    { name = "nlp2doql", marker = "extra == 'dev'", editable = "packages/nlp2doql" },
     { name = "nlp2doql", marker = "extra == 'tooling'", editable = "packages/nlp2doql" },
     { name = "op3", marker = "extra == 'device-adopt'", specifier = ">=0.1.8" },
     { name = "pfix", specifier = ">=0.1.60" },
@@ -994,7 +975,6 @@ requires-dist = [
     { name = "ruff", marker = "extra == 'dev'" },
     { name = "sqlalchemy", marker = "extra == 'api'", specifier = ">=2.0" },
     { name = "testql", specifier = ">=1.2.63" },
-    { name = "uri2doql", marker = "extra == 'dev'", editable = "packages/uri2doql" },
     { name = "uri2doql", marker = "extra == 'tooling'", editable = "packages/uri2doql" },
 ]
 provides-extras = ["dev", "api", "lsp", "deploy", "device-adopt", "tooling"]
