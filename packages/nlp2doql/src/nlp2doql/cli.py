@@ -9,7 +9,7 @@ import sys
 
 from nlp2doql.apply import apply_nl, edit_nl
 from nlp2doql.pipeline import generate_spec
-from nlp2doql.validate import validate_doql, validate_doql_file
+from nlp2doql.validate import validate_doql_file
 
 
 def main(argv: list[str] | None = None) -> int:

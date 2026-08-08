@@ -1,0 +1,15 @@
+root ::= ws "{" ws contract-version ws "," ws title ws "," ws blocks ws "}" ws
+
+contract-version ::= "\"contractVersion\"" ws ":" ws "\"1.0.0\""
+title ::= "\"title\"" ws ":" ws string
+blocks ::= "\"blocks\"" ws ":" ws "[" ws block (ws "," ws block)* ws "]"
+block ::= "{" ws selector ws "," ws properties (ws "," ws comment)? ws "}"
+selector ::= "\"selector\"" ws ":" ws string
+properties ::= "\"properties\"" ws ":" ws "{" ws (pair (ws "," ws pair)*)? ws "}"
+comment ::= "\"comment\"" ws ":" ws string
+pair ::= string ws ":" ws string
+
+string ::= "\"" char* "\""
+char ::= [^"\\\x00-\x1f] | "\\" (["\\/bfnrt] | "u" hex hex hex hex)
+hex ::= [0-9a-fA-F]
+ws ::= [ \t\n\r]*

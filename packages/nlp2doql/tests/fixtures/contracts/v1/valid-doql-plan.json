@@ -1,0 +1,11 @@
+{
+  "contractVersion": "1.0.0",
+  "title": "CRM",
+  "blocks": [
+    {
+      "selector": "entity[name=\"Contact\"]",
+      "properties": { "first_name": "string" },
+      "comment": "Contact aggregate"
+    }
+  ]
+}

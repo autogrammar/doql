@@ -7,7 +7,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
-from uri2doql.nlp2uri import best_uri, nlp2uri
+from uri2doql.nlp2uri import best_uri
 
 
 @dataclass
@@ -73,7 +73,9 @@ def apply_nl(
                 action="validate",
                 output=json.dumps(result, ensure_ascii=False, indent=2),
                 data=result,
-                error=None if result.get("ok") else str(result.get("errors") or result.get("error")),
+                error=None
+                if result.get("ok")
+                else str(result.get("errors") or result.get("error")),
             )
 
         if intent == "generate":
@@ -96,7 +98,9 @@ def apply_nl(
 
         hit = best_uri(prompt, file=explicit_file, dest=dest)
         if not hit:
-            return ApplyResult(ok=False, prompt=prompt, action=intent, error="could not resolve NL to doql:// URI")
+            return ApplyResult(
+                ok=False, prompt=prompt, action=intent, error="could not resolve NL to doql:// URI"
+            )
 
         uri = hit.uri
         if intent in {"patch", "update", "append"}:
@@ -138,7 +142,9 @@ def apply_nl(
 
         from uri2doql.query import query_uri
 
-        query = query_uri(uri, file=explicit_file, fmt="less" if "less" in prompt.lower() else "json")
+        query = query_uri(
+            uri, file=explicit_file, fmt="less" if "less" in prompt.lower() else "json"
+        )
         return ApplyResult(
             ok=query.ok,
             prompt=prompt,

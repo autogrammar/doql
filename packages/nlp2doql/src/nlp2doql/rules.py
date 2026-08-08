@@ -89,7 +89,7 @@ def _default_entities(prompt: str) -> list[BlockPlan]:
                         fields=[
                             ("title", "string!"),
                             ("value", "decimal"),
-                            ("stage", 'enum[lead, won, lost] default=lead'),
+                            ("stage", "enum[lead, won, lost] default=lead"),
                         ],
                     ),
                 )
