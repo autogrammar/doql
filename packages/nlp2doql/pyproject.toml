@@ -15,15 +15,28 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-llm = ["litellm>=1.0"]
+llm = ["litellm>=1.0", "jsonschema>=4.21"]
 mcp = ["mcp>=1.0"]
-dev = ["pytest>=8.0"]
+dev = ["pytest>=8.0", "jsonschema>=4.21"]
 
 [project.scripts]
 nlp2doql = "nlp2doql.cli:main"
 
+[tool.setuptools]
+include-package-data = false
+
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+nlp2doql = [
+    "contracts/v1/*.gbnf",
+    "contracts/v1/*.json",
+    "contracts/v1/*.proto",
+]
+
+[tool.setuptools.exclude-package-data]
+nlp2doql = ["**/__pycache__/*", "**/*.pyc"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

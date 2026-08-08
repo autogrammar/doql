@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package nlp2doql.contracts.v1;
+
+// Transport model equivalent to the JSON and GBNF DoqlPlan v1 contracts.
+message DoqlPlan {
+  string contract_version = 1 [json_name = "contractVersion"];
+  string title = 2;
+  repeated Block blocks = 3;
+}
+
+message Block {
+  string selector = 1;
+  map<string, string> properties = 2;
+  string comment = 3;
+}

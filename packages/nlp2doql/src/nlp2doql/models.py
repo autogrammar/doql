@@ -34,6 +34,7 @@ class DoqlPlan:
     planner: str = "rules"
     confidence: float = 0.0
     rationale: str = ""
+    contract_version: str = "1.0.0"
 
     def to_doql_less(self) -> str:
         header = f"// SCENARIO: {self.title}\n// PLANNER: {self.planner}\n"

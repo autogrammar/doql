@@ -2309,9 +2309,11 @@ dependencies = [
 
 [package.optional-dependencies]
 dev = [
+    { name = "jsonschema" },
     { name = "pytest" },
 ]
 llm = [
+    { name = "jsonschema" },
     { name = "litellm" },
 ]
 mcp = [
@@ -2321,6 +2323,8 @@ mcp = [
 [package.metadata]
 requires-dist = [
     { name = "doql", editable = "." },
+    { name = "jsonschema", marker = "extra == 'dev'", specifier = ">=4.21" },
+    { name = "jsonschema", marker = "extra == 'llm'", specifier = ">=4.21" },
     { name = "litellm", marker = "extra == 'llm'", specifier = ">=1.0" },
     { name = "mcp", marker = "extra == 'mcp'", specifier = ">=1.0" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },

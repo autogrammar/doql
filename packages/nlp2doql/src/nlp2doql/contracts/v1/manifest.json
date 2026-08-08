@@ -1,0 +1,16 @@
+{
+  "contract": "nlp2doql.DoqlPlan",
+  "version": "1.0.0",
+  "boundary": "nlp2doql.llm.plan_with_litellm",
+  "mediaType": "application/json",
+  "artifacts": {
+    "grammar": "doql-plan.gbnf",
+    "protobuf": "doql-plan.proto",
+    "schema": "doql-plan.schema.json"
+  },
+  "runtime": {
+    "parser": "nlp2doql.llm._parse_llm_json",
+    "validator": "nlp2doql.contracts.validate_payload",
+    "structuredOutput": "nlp2doql.contracts.response_format"
+  }
+}

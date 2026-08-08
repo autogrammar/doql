@@ -3,17 +3,21 @@
 from __future__ import annotations
 
 import json
-import re
 
+from nlp2doql.contracts import DOQL_PLAN_VERSION, response_format, validate_payload
 from nlp2doql.models import BlockPlan, DoqlPlan
-from nlp2doql.rules import plan_with_rules
 
 
 def _parse_llm_json(text: str) -> dict:
-    match = re.search(r"\{.*\}", text, re.DOTALL)
-    if not match:
-        raise ValueError("LLM response did not contain JSON")
-    return json.loads(match.group(0))
+    """Parse and validate the complete model response, without salvaging prose."""
+    try:
+        payload = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise ValueError("LLM response must be a single JSON object") from exc
+    if not isinstance(payload, dict):
+        raise ValueError("LLM response must be a JSON object")
+    validate_payload(payload)
+    return payload
 
 
 def plan_with_litellm(prompt: str, *, model: str) -> DoqlPlan:
@@ -24,8 +28,8 @@ def plan_with_litellm(prompt: str, *, model: str) -> DoqlPlan:
 
     system = (
         "You generate DOQL blocks in CSS-like LESS syntax. "
-        "Return JSON: {\"title\": str, \"blocks\": [{\"selector\": str, \"properties\": {k:v}}]}. "
-        "Use selectors like app, entity[name=\"X\"], interface[type=\"web\"], workflow[name=\"test\"]."
+        f"Return only JSON conforming to the DoqlPlan {DOQL_PLAN_VERSION} contract. "
+        'Use selectors like app, entity[name="X"], interface[type="web"], workflow[name="test"].'
     )
     response = litellm.completion(
         model=model,
@@ -33,22 +37,23 @@ def plan_with_litellm(prompt: str, *, model: str) -> DoqlPlan:
             {"role": "system", "content": system},
             {"role": "user", "content": prompt},
         ],
+        response_format=response_format(),
     )
     content = response.choices[0].message.content or ""
     payload = _parse_llm_json(content)
     blocks = [
         BlockPlan(
             selector=item["selector"],
-            properties={str(k): str(v) for k, v in (item.get("properties") or {}).items()},
+            properties=item["properties"],
+            comment=item.get("comment", ""),
         )
-        for item in payload.get("blocks") or []
+        for item in payload["blocks"]
     ]
-    if not blocks:
-        return plan_with_rules(prompt)
     return DoqlPlan(
-        title=str(payload.get("title") or prompt[:80]),
+        title=payload["title"],
         blocks=blocks,
         planner="litellm",
         confidence=0.8,
         rationale=f"litellm model={model}",
+        contract_version=payload["contractVersion"],
     )

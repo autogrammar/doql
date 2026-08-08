@@ -25,4 +25,4 @@ def test_generate_writes_file(tmp_path):
     result = generate_spec("simple API backend", out_path=out)
     assert result.ok
     assert out.is_file()
-    assert "interface[type=\"api\"]" in out.read_text(encoding="utf-8")
+    assert 'interface[type="api"]' in out.read_text(encoding="utf-8")

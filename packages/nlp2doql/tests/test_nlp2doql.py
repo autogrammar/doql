@@ -1,10 +1,7 @@
-import sys
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-import pytest
-
-from nlp2doql import generate_spec, BlockPlan, DoqlPlan, GenerateResult
+from nlp2doql import generate_spec
 from nlp2doql.cli import main as cli_main
 from nlp2doql.validate import validate_doql, validate_doql_file
 
@@ -57,7 +54,7 @@ def test_generate_spec_llm(mock_completion: MagicMock) -> None:
     mock_response.choices = [
         MagicMock(
             message=MagicMock(
-                content='{"title": "CRM", "blocks": [{"selector": "app", "properties": {"name": "CRM"}}, {"selector": "entity[name=\\"Contact\\"]", "properties": {"first_name": "string"}}]}'
+                content='{"contractVersion": "1.0.0", "title": "CRM", "blocks": [{"selector": "app", "properties": {"name": "CRM"}}, {"selector": "entity[name=\\"Contact\\"]", "properties": {"first_name": "string"}}]}'
             )
         )
     ]
@@ -66,18 +63,20 @@ def test_generate_spec_llm(mock_completion: MagicMock) -> None:
     res = generate_spec("create crm", use_llm=True, model="ollama/qwen2.5:7b")
     assert res.ok is True
     assert res.plan.planner == "litellm"
+    assert res.plan.contract_version == "1.0.0"
     assert "Contact" in res.doql
+    assert mock_completion.call_args.kwargs["response_format"]["type"] == "json_schema"
 
 
 def test_cli_doctor() -> None:
-    with patch("sys.stdout") as mock_stdout:
+    with patch("sys.stdout"):
         code = cli_main(["doctor"])
         assert code == 0
 
 
 def test_cli_validate(tmp_path: Path) -> None:
     f = tmp_path / "app.doql.less"
-    f.write_text("app { name: \"Demo\"; }", encoding="utf-8")
+    f.write_text('app { name: "Demo"; }', encoding="utf-8")
     code = cli_main(["validate", str(f)])
     assert code == 0
 
