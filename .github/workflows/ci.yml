@@ -28,9 +28,13 @@ jobs:
           pip install -e ./plugins/doql-plugin-iso17025
           pip install -e ./plugins/doql-plugin-fleet
           pip install -e ./plugins/doql-plugin-erp
+          pip install -e ./packages/cli2doql
+          pip install -e ./packages/mcp2doql
+          pip install -e ./packages/dsl2doql
       - name: Run pytest
         run: pytest -v
       - name: Type-check the complete DOQL runtime
+        if: matrix.python-version == '3.11'
         run: mypy doql
 
   # ─── End-to-end runtime smoke test ──────────────────────────────────────
