@@ -17,7 +17,7 @@ import workflows.wf_certificate_immutability  # noqa: F401
 logger = logging.getLogger("workflow.scheduler")
 
 SCHEDULED_WORKFLOWS = [
-    ("calibration_due_reminder", "0 8 * * MON"),
+    ('calibration_due_reminder', '0 8 * * MON'),
 ]
 
 

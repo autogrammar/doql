@@ -17,7 +17,7 @@ import workflows.wf_overdue_activity_reminder  # noqa: F401
 logger = logging.getLogger("workflow.scheduler")
 
 SCHEDULED_WORKFLOWS = [
-    ("overdue_activity_reminder", "0 9 * * *"),
+    ('overdue_activity_reminder', '0 9 * * *'),
 ]
 
 

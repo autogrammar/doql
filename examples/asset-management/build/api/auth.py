@@ -12,7 +12,17 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 
 from database import Base, get_db
-from models import User
+class AuthUser(Base):
+    __tablename__ = "auth_users"
+    id = Column(String(36), primary_key=True)
+    username = Column(String(255), unique=True, nullable=False)
+    email = Column(String(255), unique=True, nullable=True)
+    hashed_password = Column(String(255), nullable=False)
+    role = Column(String(64), default="user")
+    created_at = Column(DateTime, default=datetime.now)
+
+# Backward-compatible public name for generated consumers.
+User = AuthUser
 
 SECRET_KEY = os.getenv("JWT_SECRET", "change-me-in-production")
 ALGORITHM = "HS256"
@@ -52,7 +62,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> AuthUser:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid authentication credentials",
@@ -65,14 +75,14 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    user = db.query(User).filter(User.id == user_id).first()
+    user = db.query(AuthUser).filter(AuthUser.id == user_id).first()
     if user is None:
         raise credentials_exception
     return user
 
 
 def require_role(*allowed_roles: str):
-    def checker(current_user: User = Depends(get_current_user)):
+    def checker(current_user: AuthUser = Depends(get_current_user)):
         if current_user.role not in allowed_roles:
             raise HTTPException(status_code=403, detail="Insufficient permissions")
         return current_user
@@ -82,10 +92,10 @@ def require_role(*allowed_roles: str):
 @router.post("/register", response_model=UserResponse, status_code=201)
 def register(data: UserCreate, db: Session = Depends(get_db)):
     import uuid
-    existing = db.query(User).filter(User.username == data.username).first()
+    existing = db.query(AuthUser).filter(AuthUser.username == data.username).first()
     if existing:
         raise HTTPException(400, "Username already taken")
-    user = User(
+    user = AuthUser(
         id=str(uuid.uuid4()),
         username=data.username,
         email=data.email,
@@ -100,7 +110,7 @@ def register(data: UserCreate, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=Token)
 def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.username == form.username).first()
+    user = db.query(AuthUser).filter(AuthUser.username == form.username).first()
     if not user or not pwd_context.verify(form.password, user.hashed_password):
         raise HTTPException(401, "Incorrect username or password")
     token = create_access_token({"sub": user.id, "role": user.role})
@@ -108,5 +118,5 @@ def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get
 
 
 @router.get("/me", response_model=UserResponse)
-def me(current_user: User = Depends(get_current_user)):
+def me(current_user: AuthUser = Depends(get_current_user)):
     return current_user

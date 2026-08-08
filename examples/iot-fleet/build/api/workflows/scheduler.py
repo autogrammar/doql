@@ -17,7 +17,7 @@ import workflows.wf_ota_canary  # noqa: F401
 logger = logging.getLogger("workflow.scheduler")
 
 SCHEDULED_WORKFLOWS = [
-    ("heartbeat_check", "*/1 * * * *"),
+    ('heartbeat_check', '*/1 * * * *'),
 ]
 
 

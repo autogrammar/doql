@@ -73,7 +73,6 @@
   "entity.calibration_order.field.status": "Status",
   "entity.calibration_order.field.total_price": "Total Price",
   "entity.calibration_order.field.invoice_number": "Invoice Number",
-  "page.lab_overview.title": "Lab Overview",
   "page.intake.title": "Intake",
   "page.calibration_workflow.title": "Calibration Workflow",
   "page.certificates.title": "Certificates",

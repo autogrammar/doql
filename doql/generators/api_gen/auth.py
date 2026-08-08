@@ -16,17 +16,21 @@ def gen_auth(spec: DoqlSpec) -> str:
         role_names.append("user")
     roles_enum = ", ".join(f'"{r}"' for r in role_names)
 
-    # Check if User entity already exists in spec to avoid duplicate table definition
-    has_user_entity = any(e.name == "User" for e in spec.entities)
+    # Reuse a domain User only when it implements the authentication contract.
+    user_entity = next((entity for entity in spec.entities if entity.name == "User"), None)
+    user_fields = {field.name for field in user_entity.fields} if user_entity else set()
+    has_auth_user_entity = {"username", "email", "hashed_password", "role"} <= user_fields
 
-    if has_user_entity:
-        # User model is defined in models.py, import it instead of redefining
-        _umd = "from models import User"
+    if has_auth_user_entity:
+        _umd = "from models import User as AuthUser"
     else:
-        # Generate standalone User model for authentication
+        # A domain entity named User may describe a person without login
+        # credentials. Keep authentication records in a separate table so the
+        # generated ORM metadata remains valid and the two concepts do not
+        # accidentally share an incompatible schema.
         _umd = (
-            "class User(Base):\n"
-            '    __tablename__ = "users"\n'
+            "class AuthUser(Base):\n"
+            '    __tablename__ = "auth_users"\n'
             "    id = Column(String(36), primary_key=True)\n"
             "    username = Column(String(255), unique=True, nullable=False)\n"
             "    email = Column(String(255), unique=True, nullable=True)\n"
@@ -54,6 +58,9 @@ def gen_auth(spec: DoqlSpec) -> str:
 
         from database import Base, get_db
 {user_model_def}
+
+        # Backward-compatible public name for generated consumers.
+        User = AuthUser
 
         SECRET_KEY = os.getenv("JWT_SECRET", "change-me-in-production")
         ALGORITHM = "HS256"
@@ -93,7 +100,7 @@ def gen_auth(spec: DoqlSpec) -> str:
             return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
-        def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
+        def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> AuthUser:
             credentials_exception = HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid authentication credentials",
@@ -106,14 +113,14 @@ def gen_auth(spec: DoqlSpec) -> str:
                     raise credentials_exception
             except JWTError:
                 raise credentials_exception
-            user = db.query(User).filter(User.id == user_id).first()
+            user = db.query(AuthUser).filter(AuthUser.id == user_id).first()
             if user is None:
                 raise credentials_exception
             return user
 
 
         def require_role(*allowed_roles: str):
-            def checker(current_user: User = Depends(get_current_user)):
+            def checker(current_user: AuthUser = Depends(get_current_user)):
                 if current_user.role not in allowed_roles:
                     raise HTTPException(status_code=403, detail="Insufficient permissions")
                 return current_user
@@ -123,10 +130,10 @@ def gen_auth(spec: DoqlSpec) -> str:
         @router.post("/register", response_model=UserResponse, status_code=201)
         def register(data: UserCreate, db: Session = Depends(get_db)):
             import uuid
-            existing = db.query(User).filter(User.username == data.username).first()
+            existing = db.query(AuthUser).filter(AuthUser.username == data.username).first()
             if existing:
                 raise HTTPException(400, "Username already taken")
-            user = User(
+            user = AuthUser(
                 id=str(uuid.uuid4()),
                 username=data.username,
                 email=data.email,
@@ -141,7 +148,7 @@ def gen_auth(spec: DoqlSpec) -> str:
 
         @router.post("/login", response_model=Token)
         def login(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-            user = db.query(User).filter(User.username == form.username).first()
+            user = db.query(AuthUser).filter(AuthUser.username == form.username).first()
             if not user or not pwd_context.verify(form.password, user.hashed_password):
                 raise HTTPException(401, "Incorrect username or password")
             token = create_access_token({{"sub": user.id, "role": user.role}})
@@ -149,6 +156,6 @@ def gen_auth(spec: DoqlSpec) -> str:
 
 
         @router.get("/me", response_model=UserResponse)
-        def me(current_user: User = Depends(get_current_user)):
+        def me(current_user: AuthUser = Depends(get_current_user)):
             return current_user
     ''')
