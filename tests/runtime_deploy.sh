@@ -3,9 +3,13 @@
 # Builds, launches the generated API, runs tests, and cleans up.
 set -eo pipefail
 
-ROOT="/home/tom/github/oqlos/doql"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VENV="/tmp/doql-runtime"
 API_DIR="$ROOT/examples/asset-management/build/api"
+DOQL_BIN="$ROOT/venv/bin/doql"
+if [[ ! -x "$DOQL_BIN" ]]; then
+  DOQL_BIN="$(command -v doql)"
+fi
 PORT=8766
 LOG=/tmp/doql-api.log
 PIDFILE=/tmp/doql-api.pid
@@ -24,7 +28,7 @@ trap cleanup EXIT
 
 # 1. Fresh build
 echo "=== Building ==="
-"$ROOT/venv/bin/doql" -d "$ROOT/examples/asset-management" build --force 2>&1 | tail -3
+"$DOQL_BIN" -d "$ROOT/examples/asset-management" build --force 2>&1 | tail -3
 
 # 2. Clear DB
 rm -f "$API_DIR/data.db"

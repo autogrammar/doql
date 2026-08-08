@@ -3,9 +3,13 @@
 # Catches regressions across all generator paths, not just asset-management.
 set -eo pipefail
 
-ROOT="/home/tom/github/oqlos/doql"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VENV="/tmp/doql-runtime"
 PORT=8777
+DOQL_BIN="$ROOT/venv/bin/doql"
+if [[ ! -x "$DOQL_BIN" ]]; then
+  DOQL_BIN="$(command -v doql)"
+fi
 
 # All ten showcase examples.  Those without api/main.py (document-generator,
 # kiosk-station) are automatically skipped by the loop below.
@@ -41,7 +45,7 @@ for ex in "${EXAMPLES[@]}"; do
   printf "\n── %-22s  " "$ex"
 
   # Ensure fresh build
-  "$ROOT/venv/bin/doql" -d "$ROOT/examples/$ex" build --force >/dev/null 2>&1 || {
+  "$DOQL_BIN" -d "$ROOT/examples/$ex" build --force >/dev/null 2>&1 || {
     echo "✗ build failed"; fail=$((fail+1)); continue
   }
 

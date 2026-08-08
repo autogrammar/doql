@@ -22,7 +22,8 @@ import pytest
 
 ROOT = pathlib.Path(__file__).parent.parent
 EXAMPLES = ROOT / "examples"
-DOQL_BIN = ROOT / "venv" / "bin" / "doql"
+_LOCAL_DOQL_BIN = ROOT / "venv" / "bin" / "doql"
+DOQL_COMMAND = (str(_LOCAL_DOQL_BIN),) if _LOCAL_DOQL_BIN.exists() else ("doql",)
 RUNTIME_VENV = pathlib.Path("/tmp/doql-runtime")
 RUNTIME_PY = RUNTIME_VENV / "bin" / "python"
 RUNTIME_UVICORN = RUNTIME_VENV / "bin" / "uvicorn"
@@ -80,7 +81,7 @@ def test_api_boot_and_health(example, tmp_path):
 
     # Build
     result = subprocess.run(
-        [str(DOQL_BIN), "-d", str(work), "build", "--force"],
+        [*DOQL_COMMAND, "-d", str(work), "build", "--force"],
         capture_output=True, text=True, timeout=60,
     )
     assert result.returncode == 0, f"build failed: {result.stderr}"
@@ -138,7 +139,7 @@ def test_api_boot_and_health(example, tmp_path):
         ) as resp:
             spec = json.loads(resp.read())
             endpoints = len(spec.get("paths", {}))
-            assert endpoints > 0, f"OpenAPI has 0 endpoints"
+            assert endpoints > 0, "OpenAPI has 0 endpoints"
 
     finally:
         proc.terminate()
@@ -232,7 +233,7 @@ def test_build_produces_expected_targets(example, tmp_path):
         shutil.copy(env_ex, work / ".env")
 
     result = subprocess.run(
-        [str(DOQL_BIN), "-d", str(work), "build", "--force"],
+        [*DOQL_COMMAND, "-d", str(work), "build", "--force"],
         capture_output=True, text=True, timeout=60,
     )
     assert result.returncode == 0, f"build failed: {result.stderr}"
