@@ -27,7 +27,7 @@ app.add_middleware(
 app.include_router(router)
 
 try:
-    from auth import router as auth_router, User as AuthUser  # noqa: F401
+    from auth import router as auth_router, AuthUser  # noqa: F401
     app.include_router(auth_router)
 except ImportError:
     pass

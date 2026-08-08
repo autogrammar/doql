@@ -46,20 +46,27 @@ jobs:
           doql build --force
       - name: Install API deps
         run: |
-          cd build/api
-          pip install -r requirements.txt
+          if [ -f build/api/requirements.txt ]; then
+            pip install -r build/api/requirements.txt
+          else
+            echo "No generated API; skipping dependency installation"
+          fi
       - name: API smoke test
         run: |
-          cd build/api
-          timeout 10 python -c "
-          from main import app
-          from fastapi.testclient import TestClient
-          client = TestClient(app)
-          r = client.get('/health')
-          assert r.status_code == 200
-          assert r.json()['status'] == 'ok'
-          print('Health check passed')
-          " || true
+          if [ -f build/api/main.py ]; then
+            cd build/api
+            timeout 10 python -c "
+            from main import app
+            from fastapi.testclient import TestClient
+            client = TestClient(app)
+            r = client.get('/health')
+            assert r.status_code == 200
+            assert r.json()['status'] == 'ok'
+            print('Health check passed')
+            "
+          else
+            echo "No generated API; skipping smoke test"
+          fi
 
   web-build:
     runs-on: ubuntu-latest
@@ -77,10 +84,8 @@ jobs:
           pip install doql
           doql build --force
       - name: Install web deps
-        run: |
-          cd build/web
-          npm install
+        run: npm --prefix build/web install
+        if: ${{ hashFiles('build/web/package.json') != '' }}
       - name: Build web
-        run: |
-          cd build/web
-          npm run build
+        run: npm --prefix build/web run build
+        if: ${{ hashFiles('build/web/package.json') != '' }}

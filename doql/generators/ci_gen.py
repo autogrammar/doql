@@ -12,7 +12,7 @@ from ..parser import DoqlSpec
 from ..utils.naming import slug
 
 
-def _gen_github_action(spec: DoqlSpec) -> str:
+def _gen_github_action(spec: DoqlSpec, install_command: str = "pip install doql") -> str:
     """Generate a GitHub Actions workflow for doql projects."""
     return textwrap.dedent(f'''\
         name: doql CI
@@ -32,7 +32,7 @@ def _gen_github_action(spec: DoqlSpec) -> str:
                 with:
                   python-version: "3.12"
               - name: Install doql
-                run: pip install doql
+                run: {install_command}
               - name: Validate
                 run: doql validate
               - name: Build
@@ -59,24 +59,31 @@ def _gen_github_action(spec: DoqlSpec) -> str:
                   python-version: "3.12"
               - name: Install doql & build
                 run: |
-                  pip install doql
+                  {install_command}
                   doql build --force
               - name: Install API deps
                 run: |
-                  cd build/api
-                  pip install -r requirements.txt
+                  if [ -f build/api/requirements.txt ]; then
+                    pip install -r build/api/requirements.txt
+                  else
+                    echo "No generated API; skipping dependency installation"
+                  fi
               - name: API smoke test
                 run: |
-                  cd build/api
-                  timeout 10 python -c "
-                  from main import app
-                  from fastapi.testclient import TestClient
-                  client = TestClient(app)
-                  r = client.get('/health')
-                  assert r.status_code == 200
-                  assert r.json()['status'] == 'ok'
-                  print('Health check passed')
-                  " || true
+                  if [ -f build/api/main.py ]; then
+                    cd build/api
+                    timeout 10 python -c "
+                    from main import app
+                    from fastapi.testclient import TestClient
+                    client = TestClient(app)
+                    r = client.get('/health')
+                    assert r.status_code == 200
+                    assert r.json()['status'] == 'ok'
+                    print('Health check passed')
+                    "
+                  else
+                    echo "No generated API; skipping smoke test"
+                  fi
 
           web-build:
             runs-on: ubuntu-latest
@@ -91,16 +98,14 @@ def _gen_github_action(spec: DoqlSpec) -> str:
                   python-version: "3.12"
               - name: Install doql & build
                 run: |
-                  pip install doql
+                  {install_command}
                   doql build --force
               - name: Install web deps
-                run: |
-                  cd build/web
-                  npm install
+                run: npm --prefix build/web install
+                if: ${{{{ hashFiles('build/web/package.json') != '' }}}}
               - name: Build web
-                run: |
-                  cd build/web
-                  npm run build
+                run: npm --prefix build/web run build
+                if: ${{{{ hashFiles('build/web/package.json') != '' }}}}
     ''')
 
 
@@ -216,6 +221,9 @@ def _gen_jenkinsfile(spec: DoqlSpec) -> str:
 def generate(spec: DoqlSpec, env_vars: dict[str, str], out: pathlib.Path) -> None:
     """Generate CI configuration files based on ci_configs or fallback to GitHub Actions."""
     ci_types = {c.type for c in spec.ci_configs}
+    install_command = (
+        "pip install -e ." if (out / "doql" / "__init__.py").is_file() else "pip install doql"
+    )
 
     # Fallback to github if no CI blocks declared
     if not ci_types:
@@ -225,7 +233,9 @@ def generate(spec: DoqlSpec, env_vars: dict[str, str], out: pathlib.Path) -> Non
         if ctype in ("github", "github-actions"):
             gh_dir = out / ".github" / "workflows"
             gh_dir.mkdir(parents=True, exist_ok=True)
-            (gh_dir / "doql-ci.yml").write_text(_gen_github_action(spec), encoding="utf-8")
+            (gh_dir / "doql-ci.yml").write_text(
+                _gen_github_action(spec, install_command), encoding="utf-8"
+            )
             print(f"    → .github/workflows/doql-ci.yml")
         elif ctype in ("gitlab", "gitlab-ci"):
             (out / ".gitlab-ci.yml").write_text(_gen_gitlab_ci(spec), encoding="utf-8")
@@ -237,5 +247,7 @@ def generate(spec: DoqlSpec, env_vars: dict[str, str], out: pathlib.Path) -> Non
             # Unknown CI provider: default to GitHub Actions
             gh_dir = out / ".github" / "workflows"
             gh_dir.mkdir(parents=True, exist_ok=True)
-            (gh_dir / "doql-ci.yml").write_text(_gen_github_action(spec), encoding="utf-8")
+            (gh_dir / "doql-ci.yml").write_text(
+                _gen_github_action(spec, install_command), encoding="utf-8"
+            )
             print(f"    → .github/workflows/doql-ci.yml")

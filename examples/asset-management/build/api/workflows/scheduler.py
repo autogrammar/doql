@@ -19,9 +19,9 @@ import workflows.wf_cylinder_filling_audit  # noqa: F401
 logger = logging.getLogger("workflow.scheduler")
 
 SCHEDULED_WORKFLOWS = [
-    ("daily_overdue_check", "0 8 * * *"),
-    ("annual_exercise_reminder", "0 9 1 1 *"),
-    ("cylinder_filling_audit", "monthly"),
+    ('daily_overdue_check', '0 8 * * *'),
+    ('annual_exercise_reminder', '0 9 1 1 *'),
+    ('cylinder_filling_audit', 'monthly'),
 ]
 
 

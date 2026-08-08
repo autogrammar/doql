@@ -46,16 +46,6 @@ dev = [
   "goal>=2.1.0",
   "costs>=0.1.20",
   "pfix>=0.1.60",
-  "doql-plugin-gxp",
-  "doql-plugin-iso17025",
-  "doql-plugin-fleet",
-  "doql-plugin-erp",
-  "doql-plugin-shared",
-  "mcp2doql",
-  "cli2doql",
-  "dsl2doql",
-  "nlp2doql",
-  "uri2doql",
 ]
 api = [
   "fastapi>=0.104",

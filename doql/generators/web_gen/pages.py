@@ -1,6 +1,8 @@
 """Page components generation (Dashboard, Entity CRUD pages)."""
 from __future__ import annotations
 
+import json
+import re
 import textwrap
 from typing import TYPE_CHECKING
 
@@ -8,6 +10,23 @@ from .common import _kebab
 
 if TYPE_CHECKING:
     from ...parsers import DoqlSpec, Entity, EntityField
+
+
+_TS_IDENTIFIER = re.compile(r"^[A-Za-z_$][A-Za-z0-9_$]*$")
+
+
+def _property_key(name: str) -> str:
+    return name if _TS_IDENTIFIER.fullmatch(name) else json.dumps(name)
+
+
+def _property_access(owner: str, name: str) -> str:
+    if _TS_IDENTIFIER.fullmatch(name):
+        return f"{owner}.{name}"
+    return f"{owner}[{json.dumps(name)}]"
+
+
+def _object_update_key(name: str) -> str:
+    return name if _TS_IDENTIFIER.fullmatch(name) else f"[{json.dumps(name)}]"
 
 
 def _gen_dashboard(spec: DoqlSpec) -> str:
@@ -63,17 +82,19 @@ def _field_input(f: EntityField) -> str:
         input_type = "date"
     if f.type == "datetime":
         input_type = "datetime-local"
+    field_access = _property_access("form", f.name)
+    update_key = _object_update_key(f.name)
     if f.type == "bool":
         return (
             f'          <label className="flex items-center gap-2">'
-            f'<input type="checkbox" name="{f.name}" checked={{!!form.{f.name}}} '
-            f'onChange={{e => setForm({{...form, {f.name}: e.target.checked}})}} />'
+            f'<input type="checkbox" name="{f.name}" checked={{!!{field_access}}} '
+            f'onChange={{e => setForm({{...form, {update_key}: e.target.checked}})}} />'
             f' {f.name}</label>'
         )
     return (
         f'          <input name="{f.name}" placeholder="{f.name}" type="{input_type}" '
-        f'value={{form.{f.name} || ""}} '
-        f'onChange={{e => setForm({{...form, {f.name}: e.target.value}})}} '
+        f'value={{{field_access} || ""}} '
+        f'onChange={{e => setForm({{...form, {update_key}: e.target.value}})}} '
         f'className="border rounded px-3 py-2 text-sm" />'
     )
 
@@ -83,7 +104,7 @@ def _build_interface_body(visible_fields: list[EntityField]) -> str:
     fields = []
     if not any(f.name == "id" for f in visible_fields):
         fields.append("id: any")
-    fields.extend(f"{f.name}: any" for f in visible_fields)
+    fields.extend(f"{_property_key(f.name)}: any" for f in visible_fields)
     return "; ".join(fields)
 
 
@@ -93,8 +114,11 @@ def _gen_entity_page(ent: Entity) -> str:
     visible_fields = [f for f in ent.fields if not f.computed]
     form_fields = [f for f in ent.fields if not f.auto and not f.computed]
     headers = " ".join(f'<th className="text-left p-2 text-xs text-gray-500 uppercase">{f.name}</th>' for f in visible_fields[:8])
-    cells = " ".join(f'<td className="p-2 text-sm">{{String(item.{f.name} ?? "")}}</td>' for f in visible_fields[:8])
-    form_init = ", ".join(f"{f.name}: ''" for f in form_fields)
+    cells = " ".join(
+        f'<td className="p-2 text-sm">{{String({_property_access("item", f.name)} ?? "")}}</td>'
+        for f in visible_fields[:8]
+    )
+    form_init = ", ".join(f"{_property_key(f.name)}: ''" for f in form_fields)
     inputs = "\n".join(filter(None, (_field_input(f) for f in form_fields)))
     interface_body = _build_interface_body(visible_fields)
 

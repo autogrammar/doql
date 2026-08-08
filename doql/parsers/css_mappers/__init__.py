@@ -66,6 +66,7 @@ __all__ = [
     "_map_data_source",
     "_map_database",
     "_map_deploy",
+    "_map_dependencies",
     "_map_digital_twin",
     "_map_document",
     "_map_entity",

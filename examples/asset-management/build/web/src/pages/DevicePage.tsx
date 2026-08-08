@@ -2,13 +2,13 @@ import React from 'react';
 import { api } from '../api';
 
 interface Device {
-  id: any; serial: any; model: any; manufacturer: any; device_type: any; station: any; purchase_date: any; warranty_until: any; photo: any; barcode: any; status: any; last_inspection: any; total_uses: any; formula: any; when-device_type: any; result: any; when: any; indexes: any;
+  id: any; serial: any; model: any; manufacturer: any; device_type: any; station: any; purchase_date: any; warranty_until: any; photo: any; barcode: any; status: any; last_inspection: any; total_uses: any; formula: any; "when-device_type": any; result: any; when: any; indexes: any;
 }
 
 export default function DevicePage() {
   const [items, setItems] = React.useState<Device[]>([]);
   const [showForm, setShowForm] = React.useState(false);
-  const [form, setForm] = React.useState<any>({ serial: '', model: '', manufacturer: '', device_type: '', station: '', purchase_date: '', warranty_until: '', photo: '', barcode: '', status: '', last_inspection: '', total_uses: '', formula: '', when-device_type: '', result: '', when: '', indexes: '' });
+  const [form, setForm] = React.useState<any>({ serial: '', model: '', manufacturer: '', device_type: '', station: '', purchase_date: '', warranty_until: '', photo: '', barcode: '', status: '', last_inspection: '', total_uses: '', formula: '', "when-device_type": '', result: '', when: '', indexes: '' });
 
   const load = () => api.list<Device>('devices').then(setItems).catch(console.error);
   React.useEffect(() => { load(); }, []);
@@ -16,7 +16,7 @@ export default function DevicePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await api.create('devices', form);
-    setForm({ serial: '', model: '', manufacturer: '', device_type: '', station: '', purchase_date: '', warranty_until: '', photo: '', barcode: '', status: '', last_inspection: '', total_uses: '', formula: '', when-device_type: '', result: '', when: '', indexes: '' });
+    setForm({ serial: '', model: '', manufacturer: '', device_type: '', station: '', purchase_date: '', warranty_until: '', photo: '', barcode: '', status: '', last_inspection: '', total_uses: '', formula: '', "when-device_type": '', result: '', when: '', indexes: '' });
     setShowForm(false);
     load();
   };
@@ -51,7 +51,7 @@ export default function DevicePage() {
   <input name="last_inspection" placeholder="last_inspection" type="date" value={form.last_inspection || ""} onChange={e => setForm({...form, last_inspection: e.target.value})} className="border rounded px-3 py-2 text-sm" />
   <input name="total_uses" placeholder="total_uses" type="number" value={form.total_uses || ""} onChange={e => setForm({...form, total_uses: e.target.value})} className="border rounded px-3 py-2 text-sm" />
   <input name="formula" placeholder="formula" type="text" value={form.formula || ""} onChange={e => setForm({...form, formula: e.target.value})} className="border rounded px-3 py-2 text-sm" />
-  <input name="when-device_type" placeholder="when-device_type" type="text" value={form.when-device_type || ""} onChange={e => setForm({...form, when-device_type: e.target.value})} className="border rounded px-3 py-2 text-sm" />
+  <input name="when-device_type" placeholder="when-device_type" type="text" value={form["when-device_type"] || ""} onChange={e => setForm({...form, ["when-device_type"]: e.target.value})} className="border rounded px-3 py-2 text-sm" />
   <input name="result" placeholder="result" type="text" value={form.result || ""} onChange={e => setForm({...form, result: e.target.value})} className="border rounded px-3 py-2 text-sm" />
   <input name="when" placeholder="when" type="text" value={form.when || ""} onChange={e => setForm({...form, when: e.target.value})} className="border rounded px-3 py-2 text-sm" />
   <input name="indexes" placeholder="indexes" type="text" value={form.indexes || ""} onChange={e => setForm({...form, indexes: e.target.value})} className="border rounded px-3 py-2 text-sm" />
