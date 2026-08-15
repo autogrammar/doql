@@ -1,0 +1,215 @@
+{
+  "$schema": "https://wellmanifest.dev/schemas/dsl-manifest/v1",
+  "schema": "wellmanifest.dsl/manifest/v1",
+  "id": "autogrammar.doql",
+  "name": "DOQL Declarative OQL Language",
+  "version": "1.0.43",
+  "status": "stable",
+  "purpose": "Declarative language describing what artifacts to build from declarations — entities, documents, APIs, databases, kiosks",
+  "domain": "declarative-generation",
+  "owners": [
+    {
+      "kind": "repository",
+      "id": "github:autogrammar/doql",
+      "responsibilities": ["semantics", "validation", "compatibility", "runtime", "security"]
+    }
+  ],
+  "source": {
+    "repository": "https://github.com/autogrammar/doql",
+    "path": "SPEC.md",
+    "declaredVersion": "0.2.3",
+    "canonical": "text",
+    "mediaType": "text/markdown",
+    "selectors": []
+  },
+  "ownedPaths": [
+    "dsl-manifest.json",
+    "SPEC.md",
+    "docs/ADOPT.md",
+    "docs/GENERATE.md",
+    "docs/PATCH.md",
+    "docs/QUERY.md",
+    "docs/RESOLVE.md",
+    "docs/VALIDATE.md",
+    "packages/dsl2doql/src/dsl2doql/schema/commands/**",
+    "packages/nlp2doql/src/nlp2doql/contracts/v1/**"
+  ],
+  "artifacts": [
+    {
+      "path": "SPEC.md",
+      "role": "normative-source",
+      "digest": "sha256:ff790592b0a337a552b0a4ea0ed27b3defd1ffd947512d32cae6dbc72e4d7154"
+    },
+    {
+      "path": "packages/dsl2doql/src/dsl2doql/schema/commands/adopt.schema.json",
+      "role": "schema",
+      "digest": "sha256:316ec0552f50a09fa5ca3dde00bc88a4e74d2a27af4b462ff9aade4c7ad910e9"
+    },
+    {
+      "path": "packages/dsl2doql/src/dsl2doql/schema/commands/generate.schema.json",
+      "role": "schema",
+      "digest": "sha256:628059badb47fbbcbbd444ab1e310ca57e3b815766a33a92ccbc82e60f86d8fa"
+    },
+    {
+      "path": "packages/dsl2doql/src/dsl2doql/schema/commands/patch.schema.json",
+      "role": "schema",
+      "digest": "sha256:1dfcd715c4077e38a585caf887f44e7ffecc84f3ac199dafb7ce69993d7c7194"
+    },
+    {
+      "path": "packages/dsl2doql/src/dsl2doql/schema/commands/query.schema.json",
+      "role": "schema",
+      "digest": "sha256:08aaa0e719bd97be1fe1ce65f08346e812be05f73bbd818972300a18de45f25a"
+    },
+    {
+      "path": "packages/dsl2doql/src/dsl2doql/schema/commands/resolve.schema.json",
+      "role": "schema",
+      "digest": "sha256:a5368358b44b7fe374ee4dbc85fa01cec1ced9992c427e0f3ebf1702e9619e7b"
+    },
+    {
+      "path": "packages/dsl2doql/src/dsl2doql/schema/commands/validate.schema.json",
+      "role": "schema",
+      "digest": "sha256:6b0392a121acae72d2f22c66c59f4faeb0cd82b59964db05312cdc5bf7403595"
+    },
+    {
+      "path": "packages/nlp2doql/src/nlp2doql/contracts/v1/doql-plan.schema.json",
+      "role": "schema",
+      "digest": "sha256:a11f79ad4fa2b806aa3048afb4619fd43f8a428dc1302d36bc120654ca9ccc43"
+    },
+    {
+      "path": "docs/ADOPT.md",
+      "role": "documentation",
+      "digest": "sha256:1fcf504eec64066216f0c146a4b4a308401f3016d204583cc3a9c0cd8d3e02ac"
+    },
+    {
+      "path": "docs/GENERATE.md",
+      "role": "documentation",
+      "digest": "sha256:ec71feebb36b8306c9f8e57e1f5d26eb4bc35abbf283f9c506eaca5e145296a7"
+    },
+    {
+      "path": "docs/PATCH.md",
+      "role": "documentation",
+      "digest": "sha256:abd0c31e8e52ff45448e7da47cd290f3b491153ecfe5caa517ed9e91e63f7725"
+    },
+    {
+      "path": "docs/QUERY.md",
+      "role": "documentation",
+      "digest": "sha256:ecf67fe1c2d7039c06fe51e45e52aa7f72c9af13835dc85075b873e50eac0a39"
+    },
+    {
+      "path": "docs/RESOLVE.md",
+      "role": "documentation",
+      "digest": "sha256:f57978c600bb0a0caa37fcd385000df1cc18fcb55aca1ec4dca317825938e1ef"
+    },
+    {
+      "path": "docs/VALIDATE.md",
+      "role": "documentation",
+      "digest": "sha256:f01cd60b8e51e9ca794c2c52cbaf0d5f184e6815f2de363a03266f975b36fdf2"
+    }
+  ],
+  "namespaces": [
+    {
+      "prefix": "doql",
+      "uri": "https://github.com/autogrammar/doql/"
+    }
+  ],
+  "projections": [
+    {
+      "name": "doql.css",
+      "mediaType": "text/css",
+      "direction": "from-canonical",
+      "lossless": false
+    },
+    {
+      "name": "doql.less",
+      "mediaType": "text/less",
+      "direction": "from-canonical",
+      "lossless": false
+    },
+    {
+      "name": "doql.sass",
+      "mediaType": "text/x-sass",
+      "direction": "from-canonical",
+      "lossless": false
+    }
+  ],
+  "lifecycle": {
+    "compatibility": "semver",
+    "stability": "stable",
+    "breaking": "major",
+    "additive": "minor",
+    "fix": "patch"
+  },
+  "semantics": {
+    "effectModel": "declarative-policy",
+    "unknownPolicy": "reject",
+    "authoritySchema": null
+  },
+  "llm": {
+    "mode": "input",
+    "requestSchemas": ["packages/nlp2doql/src/nlp2doql/contracts/v1/doql-plan.schema.json"],
+    "responseSchemas": [],
+    "naturalLanguage": "typed-source-only",
+    "sourceSchema": "autogrammar.doql/v1",
+    "modelAuthority": "propose-only",
+    "strict": true
+  },
+  "documentation": {
+    "vocabularyKind": "commands",
+    "commandRoot": "docs",
+    "errorRoot": "docs/ERROR",
+    "criticalRoot": "docs/CRITICAL",
+    "commands": ["ADOPT", "GENERATE", "PATCH", "QUERY", "RESOLVE", "VALIDATE"],
+    "errorCodes": [],
+    "criticalCodes": []
+  },
+  "findingPolicy": {
+    "schema": "wellmanifest.dsl/findings/v1",
+    "requiredProducers": ["autogrammar.doql.governance-check"],
+    "securityProducers": ["autogrammar.doql.governance-check"],
+    "blockingSeverities": ["critical"],
+    "requireEvaluable": true,
+    "blockUnresolvedSecurity": true
+  },
+  "publicationPolicy": {
+    "declaredTier": "review",
+    "deterministic": true,
+    "independentReview": true,
+    "externalAuthority": false,
+    "runtimeIsolation": false
+  },
+  "conformance": {
+    "levels": ["manifest", "contract"],
+    "commands": ["python -m pytest tests/"],
+    "validExamples": [],
+    "invalidExamples": []
+  },
+  "mappings": [
+    {
+      "standard": "wellmanifest.dsl",
+      "version": "0.1.0",
+      "relation": "implements",
+      "uri": "https://github.com/wellmanifest/dsl"
+    }
+  ],
+  "standardsLock": {
+    "schema": "wellmanifest.standards-lock/v1",
+    "entries": [
+      {
+        "standard": "wellmanifest.dsl",
+        "version": "0.1.0",
+        "repository": "https://github.com/wellmanifest/dsl",
+        "revision": "b7d0595c95e5abbb48ebfdbdae0bc6d43c6f82f4",
+        "contracts": [
+          {
+            "ref": "https://wellmanifest.dev/schemas/dsl-manifest/v1",
+            "digest": "sha256:34d356b76bbd483372df84bb986e15bb84e9c1f8b11b7dc9e3a6c7276c85ed13"
+          },
+          {
+            "ref": "https://wellmanifest.dev/spec/DSL_STANDARD.md",
+            "digest": "sha256:2dfb09b5689289c3ad096057ca1dc2f19512639e3662188dd6c5ee25e4e8c53b"
+          }
+        ]
+      }
+    ]
+  }
+}
