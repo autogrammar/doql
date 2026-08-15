@@ -1,5 +1,9 @@
 {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "dsl2doql/commands/resolve",
+  "title": "DOQL command: RESOLVE",
+  "description": "Adopted from wellmanifest.dev/schemas/dsl-commands/resolve",
+  "x-adopts": "https://wellmanifest.dev/schemas/dsl-commands/resolve",
   "type": "object",
   "required": ["verb", "text"],
   "properties": {

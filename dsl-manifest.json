@@ -63,7 +63,7 @@
     {
       "path": "packages/dsl2doql/src/dsl2doql/schema/commands/resolve.schema.json",
       "role": "schema",
-      "digest": "sha256:a5368358b44b7fe374ee4dbc85fa01cec1ced9992c427e0f3ebf1702e9619e7b"
+      "digest": "sha256:1a7b3ac4da26f8a8951ed1b17e14d96353a2a1b41de4c698352e76526c290198"
     },
     {
       "path": "packages/dsl2doql/src/dsl2doql/schema/commands/validate.schema.json",
