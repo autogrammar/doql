@@ -48,17 +48,17 @@
     {
       "path": "packages/dsl2doql/src/dsl2doql/schema/commands/generate.schema.json",
       "role": "schema",
-      "digest": "sha256:628059badb47fbbcbbd444ab1e310ca57e3b815766a33a92ccbc82e60f86d8fa"
+      "digest": "sha256:840adfde4f497030240158b58103cabe75a1aaaa15d6544e28cb4f6b555590c5"
     },
     {
       "path": "packages/dsl2doql/src/dsl2doql/schema/commands/patch.schema.json",
       "role": "schema",
-      "digest": "sha256:1dfcd715c4077e38a585caf887f44e7ffecc84f3ac199dafb7ce69993d7c7194"
+      "digest": "sha256:32866a0cca436adcf4d353b38b57e23b9d80ce91d3aa7e06febb480d342d29a8"
     },
     {
       "path": "packages/dsl2doql/src/dsl2doql/schema/commands/query.schema.json",
       "role": "schema",
-      "digest": "sha256:08aaa0e719bd97be1fe1ce65f08346e812be05f73bbd818972300a18de45f25a"
+      "digest": "sha256:58668ccec01a7c69fc1232315a60225d8d01bf4504a59e53799ee5634a2f199b"
     },
     {
       "path": "packages/dsl2doql/src/dsl2doql/schema/commands/resolve.schema.json",
@@ -68,7 +68,7 @@
     {
       "path": "packages/dsl2doql/src/dsl2doql/schema/commands/validate.schema.json",
       "role": "schema",
-      "digest": "sha256:6b0392a121acae72d2f22c66c59f4faeb0cd82b59964db05312cdc5bf7403595"
+      "digest": "sha256:0a625e35a512337a9f6ac7cf63e1380d11f313af0f58dfa871f56c52c4cc1b55"
     },
     {
       "path": "packages/nlp2doql/src/nlp2doql/contracts/v1/doql-plan.schema.json",
