@@ -29,7 +29,7 @@ class DslEvent:
         return asdict(self)
 
 
-class EventStore:
+class DoqlEventStore:
     def __init__(self, path: Path | str, *, fmt: StoreFormat | None = None) -> None:
         self.path = Path(path)
         if fmt is not None:
@@ -100,3 +100,6 @@ def default_event_store(manifest_file: str = "app.doql.less", *, prefer_pb: bool
     if prefer_pb:
         return EventStore(Path(f"app.{stem}.events.pb"), fmt="protobuf")
     return EventStore(Path(f"app.{stem}.events.jsonl"), fmt="jsonl")
+
+
+EventStore = DoqlEventStore
