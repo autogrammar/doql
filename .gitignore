@@ -44,3 +44,8 @@ node_modules/
 # Logs
 *.log
 logs/
+
+# Koru/planfile runtime artifacts
+.koru/
+.nlp2dsl/
+.planfile/
