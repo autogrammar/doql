@@ -20,6 +20,10 @@ mcp2doql-mcp                # entry point MCP (pyproject.scripts)
 
 Narzędzia MCP m.in.: `doql_query`, `doql_materialize`, `doql_validate`, `doql_run_dsl`, `doql_patch`, `doql_apply_nl`.
 
+Operacje zapisujące lub wykonujące DSL są domyślnie zablokowane. Uruchom serwer
+z `DOQL_MCP_ALLOW_MUTATION=1`, aby jawnie zezwolić zaufanym klientom MCP na
+`materialize`, `patch`, `update`, `apply` i wykonanie DSL.
+
 ## Testy
 
 ```bash
