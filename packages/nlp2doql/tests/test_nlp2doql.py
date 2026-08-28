@@ -1,5 +1,7 @@
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
+
+import pytest
 
 from nlp2doql import generate_spec
 from nlp2doql.cli import main as cli_main
@@ -47,25 +49,59 @@ def test_generate_spec_rules() -> None:
     assert res.plan.planner == "rules"
 
 
-@patch("litellm.completion")
-def test_generate_spec_llm(mock_completion: MagicMock) -> None:
-    # Mock litellm response
-    mock_response = MagicMock()
-    mock_response.choices = [
-        MagicMock(
-            message=MagicMock(
-                content='{"contractVersion": "1.0.0", "title": "CRM", "blocks": [{"selector": "app", "properties": {"name": "CRM"}}, {"selector": "entity[name=\\"Contact\\"]", "properties": {"first_name": "string"}}]}'
-            )
-        )
-    ]
-    mock_completion.return_value = mock_response
+def test_generate_spec_llm(monkeypatch: pytest.MonkeyPatch) -> None:
+    from nlp2doql import llm as llm_mod
 
-    res = generate_spec("create crm", use_llm=True, model="ollama/qwen2.5:7b")
+    captured: dict = {}
+
+    def fake_complete(application, function, messages, **kwargs):
+        captured.update(
+            application=application, function=function, messages=messages, kwargs=kwargs
+        )
+        return type(
+            "Response",
+            (),
+            {
+                "content": '{"contractVersion": "1.0.0", "title": "CRM", "blocks": [{"selector": "app", "properties": {"name": "CRM"}}, {"selector": "entity[name=\\"Contact\\"]", "properties": {"first_name": "string"}}]}'
+            },
+        )()
+
+    monkeypatch.setattr(llm_mod, "subllm_complete", fake_complete)
+    res = generate_spec("create crm", use_llm=True, model="ignored-by-policy")
     assert res.ok is True
-    assert res.plan.planner == "litellm"
+    assert res.plan.planner == "subllm"
     assert res.plan.contract_version == "1.0.0"
     assert "Contact" in res.doql
-    assert mock_completion.call_args.kwargs["response_format"]["type"] == "json_schema"
+    assert captured["application"] == "autogrammar-doql"
+    assert captured["function"] == "translate"
+    assert captured["kwargs"]["response_format"]["type"] == "json_schema"
+
+
+def test_plan_with_litellm_alias_uses_subllm(monkeypatch: pytest.MonkeyPatch) -> None:
+    from nlp2doql import llm as llm_mod
+
+    monkeypatch.setattr(
+        llm_mod,
+        "subllm_complete",
+        lambda *args, **kwargs: type(
+            "Response",
+            (),
+            {
+                "content": '{"contractVersion": "1.0.0", "title": "CRM", "blocks": [{"selector": "app", "properties": {"name": "CRM"}}]}'
+            },
+        )(),
+    )
+    plan = llm_mod.plan_with_litellm("create crm", model="ignored")
+    assert plan.planner == "subllm"
+
+
+def test_generate_spec_llm_without_subllm(monkeypatch: pytest.MonkeyPatch) -> None:
+    from nlp2doql import llm as llm_mod
+
+    monkeypatch.setattr(llm_mod, "subllm_complete", None)
+    res = generate_spec("create crm", use_llm=True)
+    assert res.ok is False
+    assert "subactor-subllm is not installed" in (res.error or "")
 
 
 def test_cli_doctor() -> None:

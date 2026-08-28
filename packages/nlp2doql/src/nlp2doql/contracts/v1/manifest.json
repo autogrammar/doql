@@ -1,7 +1,7 @@
 {
   "contract": "nlp2doql.DoqlPlan",
   "version": "1.0.0",
-  "boundary": "nlp2doql.llm.plan_with_litellm",
+  "boundary": "nlp2doql.llm.plan_with_subllm",
   "mediaType": "application/json",
   "artifacts": {
     "grammar": "doql-plan.gbnf",

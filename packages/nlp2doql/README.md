@@ -6,7 +6,7 @@ Powiązane: [indeks paczek](../README.md) · [README główne doql](../../README
 
 ## Do czego służy
 
-- **generate** — NL → pełny `.doql.less` (reguły lub LLM)
+- **generate** — NL → pełny `.doql.less` (reguły lub centralne SubLLM)
 - **validate** — walidacja pliku DOQL
 - **apply** — NL → intent (query/patch/materialize/generate) + wykonanie
 - **edit** — NL + plik fragmentu → patch bloku
@@ -26,12 +26,13 @@ nlp2doql apply "validate app.doql.less"
 Plan zwracany przez model jest kontraktem `DoqlPlan 1.0.0`, a nie swobodnym
 fragmentem tekstu. Pakiet publikuje równoważne artefakty w
 `nlp2doql/contracts/v1`: gramatykę GBNF, model Protobuf, JSON Schema oraz
-manifest wiążący je z `nlp2doql.llm.plan_with_litellm`.
+manifest wiążący je z `nlp2doql.llm.plan_with_subllm`.
 
-Przy użyciu `nlp2doql[llm]` JSON Schema jest przekazywany do LiteLLM jako
-`response_format` i ponownie sprawdzany lokalnie przed utworzeniem DOQL. Błędna
-wersja kontraktu, tekst otaczający JSON, brak bloków albo niezgodne typy kończą
-generowanie błędem zamiast uruchamiać cichy fallback.
+Przy użyciu `nlp2doql[llm]` JSON Schema jest przekazywany do SubLLM
+(`autogrammar-doql/translate`) jako `response_format` i ponownie sprawdzany
+lokalnie przed utworzeniem DOQL. Wybór providera i modelu należy do SubLLM.
+Błędna wersja kontraktu, tekst otaczający JSON, brak bloków albo niezgodne
+typy kończą generowanie błędem zamiast uruchamiać cichy fallback.
 
 ## Testy
 

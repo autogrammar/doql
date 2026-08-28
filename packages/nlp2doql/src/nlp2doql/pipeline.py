@@ -20,9 +20,9 @@ def generate_spec(
     """Plan and render DOQL LESS from natural language."""
     try:
         if use_llm:
-            from nlp2doql.llm import plan_with_litellm
+            from nlp2doql.llm import plan_with_subllm
 
-            plan = plan_with_litellm(prompt, model=model)
+            plan = plan_with_subllm(prompt, model=model)
         else:
             plan = plan_with_rules(prompt)
         doql = plan.to_doql_less()

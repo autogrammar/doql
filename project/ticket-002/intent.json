@@ -1,0 +1,88 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-002",
+  "summary": "Route nlp2doql planner through central SubLLM",
+  "workstream": "core",
+  "classification": {
+    "kind": "FEATURE",
+    "priority": "P1",
+    "origin": "requested"
+  },
+  "allowedPaths": [
+    "packages/nlp2doql/**",
+    "project/ticket-002/**",
+    "project/TICKETS.md"
+  ],
+  "forbiddenPaths": ["project/ticket-*/user-*.md"],
+  "stacks": ["python"],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "582a420b77866a356c7e1bae8a0e776b9d4d35b4",
+    "targetBranch": "main",
+    "outcome": "nlp2doql optional LLM planning uses SubLLM route autogrammar-doql/translate; model and provider selection stay in SubLLM; tests mock the central client and do not make paid requests.",
+    "nonGoals": [
+      "Do not add a SubLLM vision route.",
+      "Do not change SubLLM policy.py.",
+      "Do not migrate nexu, testql, intract or gillm.",
+      "Do not make paid LLM requests."
+    ],
+    "complexity": "S",
+    "estimatedMinutes": 25,
+    "budgets": {
+      "maxImplementationFiles": 12,
+      "maxAffectedComponents": 2,
+      "maxPublicInterfaceChanges": 0,
+      "maxRuntimeDependencies": 1
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Replace the private LiteLLM completion in nlp2doql with subllm.complete on the already registered autogrammar-doql/translate route.",
+      "components": [
+        {
+          "name": "nlp2doql-planner",
+          "paths": ["packages/nlp2doql/**"]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [],
+      "dataChanges": [],
+      "ui": {"impact": "none", "states": [], "evidence": []},
+      "rollback": "Revert the ticket-002 commit; nlp2doql falls back to having no LLM extra until LiteLLM is restored."
+    },
+    "runtimeDependencies": [
+      "subactor-subllm @ git+https://github.com/subactor/subllm.git@0ba7ceb0da5bb3eb9cc98dd3ea47e8c00ad3ef60"
+    ],
+    "validation": [
+      {
+        "criterion": "AC-01",
+        "commands": [
+          "PYTHONPATH=packages/nlp2doql/src:packages/uri2doql/src:. python3 -m pytest packages/nlp2doql/tests -q"
+        ],
+        "evidence": "project/ticket-002/ai-grok-logs.txt"
+      },
+      {
+        "criterion": "AC-02",
+        "commands": [
+          "PYTHONPATH=packages/nlp2doql/src:packages/uri2doql/src:. python3 -m pytest packages/nlp2doql/tests/test_nlp2doql.py -q"
+        ],
+        "evidence": "test_generate_spec_llm_without_subllm"
+      },
+      {
+        "criterion": "AC-03",
+        "commands": [
+          "PYTHONPATH=packages/nlp2doql/src:packages/uri2doql/src:. python3 -m pytest packages/nlp2doql/tests -q"
+        ],
+        "evidence": "mocked subllm_complete; no paid requests"
+      },
+      {
+        "criterion": "AC-04",
+        "commands": [
+          "PYTHONPATH=packages/nlp2doql/src:packages/uri2doql/src:. python3 -m pytest packages/nlp2doql/tests/test_nlp2doql.py::test_plan_with_litellm_alias_uses_subllm -q"
+        ],
+        "evidence": "project/ticket-002/ai-grok-logs.txt"
+      }
+    ]
+  }
+}

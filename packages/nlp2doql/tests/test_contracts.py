@@ -66,6 +66,6 @@ def test_protobuf_fields_and_gbnf_version_match_json_schema() -> None:
 def test_manifest_binds_every_artifact_to_runtime_boundary() -> None:
     manifest = json.loads((CONTRACTS / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["version"] == DOQL_PLAN_VERSION
-    assert manifest["boundary"] == "nlp2doql.llm.plan_with_litellm"
+    assert manifest["boundary"] == "nlp2doql.llm.plan_with_subllm"
     for artifact in manifest["artifacts"].values():
         assert (CONTRACTS / artifact).is_file()

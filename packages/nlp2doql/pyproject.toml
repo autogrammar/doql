@@ -15,7 +15,10 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-llm = ["litellm>=1.0", "jsonschema>=4.21"]
+llm = [
+    "jsonschema>=4.21",
+    "subactor-subllm @ git+https://github.com/subactor/subllm.git@0ba7ceb0da5bb3eb9cc98dd3ea47e8c00ad3ef60",
+]
 mcp = ["mcp>=1.0"]
 dev = ["pytest>=8.0", "jsonschema>=4.21"]
 

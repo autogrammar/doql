@@ -19,8 +19,12 @@ def main(argv: list[str] | None = None) -> int:
     gen = sub.add_parser("generate", help="Generate DOQL spec from NL")
     gen.add_argument("prompt", help="Natural language description")
     gen.add_argument("--out", "-o", help="Write .doql.less file path")
-    gen.add_argument("--llm", action="store_true", help="Use litellm planner")
-    gen.add_argument("--model", default="openrouter/qwen/qwen3-coder-next")
+    gen.add_argument("--llm", action="store_true", help="Use SubLLM planner")
+    gen.add_argument(
+        "--model",
+        default="openrouter/qwen/qwen3-coder-next",
+        help="Ignored; SubLLM policy selects the model",
+    )
     gen.add_argument("--validate", action="store_true", help="Validate via doql parser")
     gen.add_argument("--json", action="store_true", help="JSON output")
 

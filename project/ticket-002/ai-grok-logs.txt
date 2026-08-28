@@ -1,0 +1,12 @@
+# ticket-002 validation receipts — 2026-08-28
+
+$ PYTHONPATH=packages/nlp2doql/src:packages/uri2doql/src:. python3 -m pytest packages/nlp2doql/tests -q
+.......................                                                  [100%]
+23 passed in 0.18s
+
+$ ./project/governance-check.sh --actor agent
+GOV-WORKSTREAM-003: packages/nlp2doql/** is not owned by workstream core
+  (core ownedPaths are src/** and tests/** only; changing
+  .governance/manifest.json is blocked by GOV-SYNC-001 and governance
+  workstream ownership). Implementation is complete locally; publication
+  is blocked until packages/** is declared on a governance ticket.

@@ -1,4 +1,4 @@
-"""Optional litellm planner for NL → DOQL."""
+"""Optional SubLLM planner for NL → DOQL."""
 
 from __future__ import annotations
 
@@ -6,6 +6,14 @@ import json
 
 from nlp2doql.contracts import DOQL_PLAN_VERSION, response_format, validate_payload
 from nlp2doql.models import BlockPlan, DoqlPlan
+
+try:
+    from subllm import complete as subllm_complete
+except ImportError:  # pragma: no cover - optional extra
+    subllm_complete = None
+
+SUBLLM_APPLICATION = "autogrammar-doql"
+SUBLLM_FUNCTION = "translate"
 
 
 def _parse_llm_json(text: str) -> dict:
@@ -20,27 +28,7 @@ def _parse_llm_json(text: str) -> dict:
     return payload
 
 
-def plan_with_litellm(prompt: str, *, model: str) -> DoqlPlan:
-    try:
-        import litellm
-    except ImportError as exc:
-        raise RuntimeError("litellm not installed; pip install 'nlp2doql[llm]'") from exc
-
-    system = (
-        "You generate DOQL blocks in CSS-like LESS syntax. "
-        f"Return only JSON conforming to the DoqlPlan {DOQL_PLAN_VERSION} contract. "
-        'Use selectors like app, entity[name="X"], interface[type="web"], workflow[name="test"].'
-    )
-    response = litellm.completion(
-        model=model,
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": prompt},
-        ],
-        response_format=response_format(),
-    )
-    content = response.choices[0].message.content or ""
-    payload = _parse_llm_json(content)
+def _plan_from_payload(payload: dict, *, rationale: str) -> DoqlPlan:
     blocks = [
         BlockPlan(
             selector=item["selector"],
@@ -52,8 +40,41 @@ def plan_with_litellm(prompt: str, *, model: str) -> DoqlPlan:
     return DoqlPlan(
         title=payload["title"],
         blocks=blocks,
-        planner="litellm",
+        planner="subllm",
         confidence=0.8,
-        rationale=f"litellm model={model}",
+        rationale=rationale,
         contract_version=payload["contractVersion"],
     )
+
+
+def plan_with_subllm(prompt: str, *, model: str | None = None) -> DoqlPlan:
+    """Plan DOQL through the central SubLLM route. ``model`` is ignored."""
+    if subllm_complete is None:
+        raise RuntimeError(
+            "subactor-subllm is not installed; pip install 'nlp2doql[llm]'"
+        )
+
+    system = (
+        "You generate DOQL blocks in CSS-like LESS syntax. "
+        f"Return only JSON conforming to the DoqlPlan {DOQL_PLAN_VERSION} contract. "
+        'Use selectors like app, entity[name="X"], interface[type="web"], workflow[name="test"].'
+    )
+    response = subllm_complete(
+        SUBLLM_APPLICATION,
+        SUBLLM_FUNCTION,
+        [
+            {"role": "system", "content": system},
+            {"role": "user", "content": prompt},
+        ],
+        response_format=response_format(),
+    )
+    payload = _parse_llm_json(response.content or "")
+    return _plan_from_payload(
+        payload,
+        rationale=f"subllm route={SUBLLM_APPLICATION}/{SUBLLM_FUNCTION}",
+    )
+
+
+def plan_with_litellm(prompt: str, *, model: str) -> DoqlPlan:
+    """Compatibility alias; provider and model stay in SubLLM policy."""
+    return plan_with_subllm(prompt, model=model)
