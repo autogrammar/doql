@@ -1,8 +1,8 @@
 {
   "name": "vscode-doql",
-  "displayName": "doql — Declarative OQL",
+  "displayName": "doql \u2014 Declarative OQL",
   "description": "Language support for .doql, .doql.css, .doql.less, .doql.sass files: syntax highlighting, diagnostics, hover, go-to-definition, completions.",
-  "version": "0.2.0",
+  "version": "1.0.44",
   "publisher": "softreck",
   "engines": {
     "vscode": "^1.85.0"
@@ -23,26 +23,43 @@
     "languages": [
       {
         "id": "doql",
-        "aliases": ["doql", "DOQL"],
-        "extensions": [".doql"],
+        "aliases": [
+          "doql",
+          "DOQL"
+        ],
+        "extensions": [
+          ".doql"
+        ],
         "configuration": "./language-configuration.json"
       },
       {
         "id": "doql-css",
-        "aliases": ["doql CSS"],
-        "extensions": [".doql.css"],
+        "aliases": [
+          "doql CSS"
+        ],
+        "extensions": [
+          ".doql.css"
+        ],
         "configuration": "./language-configuration.json"
       },
       {
         "id": "doql-less",
-        "aliases": ["doql LESS"],
-        "extensions": [".doql.less"],
+        "aliases": [
+          "doql LESS"
+        ],
+        "extensions": [
+          ".doql.less"
+        ],
         "configuration": "./language-configuration.json"
       },
       {
         "id": "doql-sass",
-        "aliases": ["doql SASS"],
-        "extensions": [".doql.sass"],
+        "aliases": [
+          "doql SASS"
+        ],
+        "extensions": [
+          ".doql.sass"
+        ],
         "configuration": "./language-configuration.json"
       }
     ],
@@ -78,7 +95,11 @@
         },
         "doql.trace.server": {
           "type": "string",
-          "enum": ["off", "messages", "verbose"],
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
           "default": "off",
           "description": "Trace LSP communication between client and server."
         }

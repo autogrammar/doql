@@ -25,6 +25,15 @@ Wszystkie istotne zmiany w projekcie `doql`. Format oparty na [Keep a Changelog]
 - CI now installs the device-adoption extra, so OP3 adoption and drift tests
   execute instead of being silently skipped.
 
+## [1.0.44] - 2026-09-03
+
+### Docs
+- Update README.md
+
+### Other
+- Update uv.lock
+- Update vscode-doql/package-lock.json
+
 ## [1.0.43] - 2026-06-09
 
 ### Docs
