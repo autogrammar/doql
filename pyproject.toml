@@ -44,6 +44,7 @@ dev = [
   "mypy",
   "goal>=2.1.0; python_version >= '3.12'",
   "costs>=0.1.20",
+  "wellman>=0.20.35",
 ]
 api = [
   "fastapi>=0.104",
@@ -87,6 +88,11 @@ dev = [
   "dsl2doql",
   "nlp2doql",
   "uri2doql",
+  "wellman>=0.20.35",
+]
+
+governance = [
+  "wellman>=0.20.35",
 ]
 
 [project.scripts]
@@ -165,10 +171,16 @@ disallow_untyped_decorators = false
 [tool.pytest.ini_options]
 minversion = "7.0"
 testpaths = ["tests"]
+pythonpath = ["."]
 # `tests/runtime_smoke.py` is a script, not a pytest module — it connects to
 # a running server on :8766. Exclude it from collection.
 python_files = ["test_*.py"]
-addopts = "-ra --tb=short"
+addopts = "-p wellmanifest_governance -ra --tb=short"
+
+[tool.wellmanifest]
+standard = "0.20.35"
+revision = "cfaa0bf0ea6b0e7349fed0bb62b5ce15792d687d"
+gate = "project/governance-check.sh"
 
 [tool.costs]
 # AI Cost tracking configuration

@@ -7,4 +7,7 @@ This file indexes governance tickets without taking ownership of
 | Ticket ID | Spec | Preprompt | Human input | Agent plans | Agent logs | Changelog |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **ticket-001** | [`README.md`](./ticket-001/README.md) | [`preprompt.md`](./ticket-001/preprompt.md) | - |  [`ai-devin.md`](./ticket-001/ai-devin.md) |  [`ai-devin-logs.txt`](./ticket-001/ai-devin-logs.txt) | [`changelog.md`](./ticket-001/changelog.md) |
+| **ticket-002** | [`README.md`](./ticket-002/README.md) | [`preprompt.md`](./ticket-002/preprompt.md) | - |  [`ai-grok.md`](./ticket-002/ai-grok.md) |  [`ai-grok-logs.txt`](./ticket-002/ai-grok-logs.txt) | [`changelog.md`](./ticket-002/changelog.md) |
+| **ticket-004** | [`README.md`](./ticket-004/README.md) | [`preprompt.md`](./ticket-004/preprompt.md) | - |  [`ai-devin.md`](./ticket-004/ai-devin.md) |  [`ai-devin-logs.txt`](./ticket-004/ai-devin-logs.txt) | [`changelog.md`](./ticket-004/changelog.md) |
+| **ticket-005** | [`README.md`](./ticket-005/README.md) | - | - | - | - | - |
 <!-- AUTO:TICKET_INDEX:END -->
