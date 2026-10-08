@@ -202,6 +202,12 @@ def main() -> int:
     Returns:
         Exit code (0 for success, non-zero for errors)
     """
+    try:
+        from ..autoupdate import check_for_updates
+        check_for_updates("doql")
+    except Exception:
+        pass
+
     p = create_parser()
     args = p.parse_args()
     handler = cast(Callable[[argparse.Namespace], int], args.func)
