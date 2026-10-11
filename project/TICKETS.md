@@ -10,5 +10,6 @@ This file indexes governance tickets without taking ownership of
 | **ticket-002** | [`README.md`](./ticket-002/README.md) | [`preprompt.md`](./ticket-002/preprompt.md) | - |  [`ai-grok.md`](./ticket-002/ai-grok.md) |  [`ai-grok-logs.txt`](./ticket-002/ai-grok-logs.txt) | [`changelog.md`](./ticket-002/changelog.md) |
 | **ticket-004** | [`README.md`](./ticket-004/README.md) | [`preprompt.md`](./ticket-004/preprompt.md) | - |  [`ai-devin.md`](./ticket-004/ai-devin.md) |  [`ai-devin-logs.txt`](./ticket-004/ai-devin-logs.txt) | [`changelog.md`](./ticket-004/changelog.md) |
 | **ticket-005** | [`README.md`](./ticket-005/README.md) | - | - | - | - | - |
+| **ticket-006** | [`README.md`](./ticket-006/README.md) | - | - | - | - | - |
 | **ticket-007** | [`README.md`](./ticket-007/README.md) | - | - | - | - | - |
 <!-- AUTO:TICKET_INDEX:END -->
