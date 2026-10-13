@@ -1,7 +1,7 @@
 """Regression tests for ``doql adopt`` (project scanner + emitter).
 
 These tests cover behaviour that has bitten real projects in
-``/home/tom/github/semcod/`` and ``/home/tom/github/oqlos/``:
+semcod and oqlos repositories:
 
 * JWT-authenticated APIs must not crash the renderer.
 * Pydantic Request/Response classes must not pollute ``ENTITY`` blocks.
@@ -12,6 +12,7 @@ These tests cover behaviour that has bitten real projects in
 from __future__ import annotations
 
 import argparse
+import os
 import textwrap
 from pathlib import Path
 
@@ -368,7 +369,7 @@ def test_workflows_are_deduplicated_across_makefile_and_taskfile(tmp_path: Path)
 # \u2500\u2500 7. End-to-end with real project (oqlos) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
 
 
-OQLOS_ROOT = Path("/home/tom/github/oqlos/oqlos")
+OQLOS_ROOT = Path(os.environ.get("OQLOS_ROOT", Path.home() / "github" / "oqlos" / "oqlos"))
 
 
 def _assert_oqlos_metadata(spec) -> None:
