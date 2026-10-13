@@ -36,13 +36,70 @@ def find_compose(root: Path) -> Path | None:
     return None
 
 
+_DEFAULT_SKIP_DIRS: frozenset[str] = frozenset({
+    "venv",
+    ".venv",
+    "node_modules",
+    "dist",
+    "build",
+    ".git",
+    ".pytest_cache",
+    ".cache",
+    ".tox",
+    ".mypy_cache",
+    ".ruff_cache",
+    "c2004",
+    "c2004-git-backup",
+    "workshop",
+    "managed_components",
+    "vendor",
+    ".subactor",
+    ".worktrees",
+    ".planfile",
+})
+
+
+def should_skip_dir(dirname: str, extra_skips: frozenset[str] | set[str] | None = None) -> bool:
+    lower = dirname.lower()
+    if lower.startswith("."):
+        return True
+    if lower in _DEFAULT_SKIP_DIRS:
+        return True
+    if extra_skips and lower in extra_skips:
+        return True
+    return False
+
+
+def walk_files(
+    root: Path,
+    extensions: tuple[str, ...] | None = None,
+    suffixes: tuple[str, ...] | None = None,
+    prefixes: tuple[str, ...] | None = None,
+    skip_dirs: frozenset[str] = _DEFAULT_SKIP_DIRS,
+) -> list[Path]:
+    """Pruned directory traversal avoiding expensive recursion into ignored trees."""
+    results: list[Path] = []
+    if not root.is_dir():
+        return results
+
+    import os
+    for dirpath, dirnames, filenames in os.walk(root, topdown=True):
+        dirnames[:] = [d for d in dirnames if not should_skip_dir(d, skip_dirs)]
+        p_dir = Path(dirpath)
+        for fn in filenames:
+            if extensions and not any(fn.endswith(ext) for ext in extensions):
+                continue
+            if suffixes and not any(fn.endswith(suf) for suf in suffixes):
+                continue
+            if prefixes and not any(fn.startswith(pre) for pre in prefixes):
+                continue
+            results.append(p_dir / fn)
+    return results
+
+
 def find_dockerfiles(root: Path) -> list[Path]:
     """Find all Dockerfiles."""
-    results = []
-    for p in root.rglob("Dockerfile*"):
-        if ".venv" not in str(p) and "venv" not in str(p) and "node_modules" not in str(p):
-            results.append(p)
-    return results
+    return walk_files(root, prefixes=("Dockerfile",))
 
 
 def camel_to_kebab(name: str) -> str:

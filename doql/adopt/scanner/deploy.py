@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from ...parsers.models import DoqlSpec, Deploy, Infrastructure, Ingress
-from .utils import find_compose, find_dockerfiles, load_yaml
+from .utils import find_compose, find_dockerfiles, load_yaml, walk_files
 
 
 # Database images to skip when extracting containers
@@ -22,11 +22,10 @@ def _detect_deployment_indicators(root: Path) -> dict[str, Any]:
         "has_ansible": any((root / d).is_dir()
                           for d in ("ansible", "deploy/ansible", "infra/ansible")),
         "has_makefile": (root / "Makefile").exists(),
-        "has_k8s": bool(list(root.rglob("*.yaml")) + list(root.rglob("*.yml")))
-                   and any(
-                       f.name.startswith(("deployment", "service", "ingress", "configmap", "kustomization"))
-                       for f in root.rglob("*.yaml")
-                   ),
+        "has_k8s": any(
+            f.name.startswith(("deployment", "service", "ingress", "configmap", "kustomization"))
+            for f in walk_files(root, extensions=(".yaml", ".yml"))
+        ),
         "has_terraform": (root / "main.tf").exists()
                          or (root / "infra" / "main.tf").exists()
                          or (root / "terraform" / "main.tf").exists(),

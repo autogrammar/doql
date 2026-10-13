@@ -38,18 +38,19 @@ def _common_import_glob(files: list[Path], root: Path, suffix: str) -> str:
     return f"**/*{suffix}"
 
 
+from .utils import walk_files
+
+
 def scan_tests(root: Path, spec: DoqlSpec) -> None:
     """Detect TestQL files and populate spec.tests import globs."""
     toon_files: list[Path] = []
     yaml_files: list[Path] = []
 
-    for pattern in _TESTQL_PATTERNS:
-        for path in root.rglob(pattern):
-            if path.is_file() and not _should_skip(path):
-                if path.name.endswith(".testql.toon.yaml"):
-                    toon_files.append(path)
-                else:
-                    yaml_files.append(path)
+    for path in walk_files(root, suffixes=(".testql.toon.yaml", ".testql.yaml")):
+        if path.name.endswith(".testql.toon.yaml"):
+            toon_files.append(path)
+        else:
+            yaml_files.append(path)
 
     if toon_files:
         spec.tests.append(

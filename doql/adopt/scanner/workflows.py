@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from ...parsers.models import DoqlSpec, Workflow, WorkflowStep
-from .utils import load_yaml
+from .utils import load_yaml, walk_files
 
 # Targets that are *meta* scaffolding, not user-facing workflows. Excluding
 # them keeps the generated ``workflow[...]`` section focused on meaningful
@@ -207,7 +207,7 @@ def _find_cli_candidates(root: Path) -> list[Path]:
         if "*" in pattern:
             parent, _ = pattern.split("/*")
             if (root / parent).is_dir():
-                candidates.extend((root / parent).rglob("*.py"))
+                candidates.extend(walk_files(root / parent, extensions=(".py",)))
         else:
             if (root / pattern).exists():
                 candidates.append(root / pattern)

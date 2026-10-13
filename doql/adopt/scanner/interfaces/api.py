@@ -5,6 +5,7 @@ import tomllib
 from pathlib import Path
 
 from ....parsers.models import DoqlSpec, Interface
+from ..utils import walk_files
 
 
 def _detect_framework_from_pyproject(pyproj: Path) -> str | None:
@@ -41,8 +42,8 @@ def _detect_framework_from_any_py(root: Path) -> str | None:
 
     Used as fallback when no api/main.py is found.
     """
-    for py_file in root.rglob("*.py"):
-        if any(skip in str(py_file) for skip in ("venv", ".venv", "node_modules", "__pycache__", ".pytest_cache", "tests/")):
+    for py_file in walk_files(root, extensions=(".py",)):
+        if "tests" in py_file.parts:
             continue
         try:
             text = py_file.read_text()
