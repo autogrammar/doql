@@ -13,6 +13,7 @@ except ImportError:
     # Fallback to local implementation if package not installed
     import re
     from ....parsers.models import Interface, Page
+    from ..utils import walk_files
 
     _MCP_TOOL_RE = re.compile(r'@mcp\.tool\(\)\s*\n\s*def\s+(\w+)')
     _FASTMCP_RE = re.compile(r'\bFastMCP\s*\(')
@@ -33,9 +34,7 @@ except ImportError:
         src = root / "src"
         search_roots = [src] if src.is_dir() else [root]
         for base in search_roots:
-            for py_file in base.rglob("*.py"):
-                if any(skip in py_file.parts for skip in ("venv", ".venv", "tests", "__pycache__")):
-                    continue
+            for py_file in walk_files(base, extensions=(".py",)):
                 try:
                     text = py_file.read_text(encoding="utf-8", errors="ignore")
                 except OSError:
@@ -56,8 +55,8 @@ except ImportError:
         tool_names = _discover_mcp_tools(root)
         has_fastmcp = bool(tool_names) or any(
             _FASTMCP_RE.search(p.read_text(encoding="utf-8", errors="ignore"))
-            for p in (root / "src").rglob("*mcp*.py")
-            if p.is_file() and ".venv" not in p.parts
+            for p in walk_files(root / "src", extensions=(".py",))
+            if "mcp" in p.name
         )
 
         if not entry_pages and not has_fastmcp:
