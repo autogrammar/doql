@@ -5,13 +5,12 @@ import re
 from pathlib import Path
 
 from ...parsers.models import DoqlSpec, Role
+from .utils import walk_files
 
 
 def _scan_sql_roles(root: Path, spec: DoqlSpec) -> None:
     """Detect roles from SQL files."""
-    for sql in root.rglob("*.sql"):
-        if ".venv" in str(sql) or "venv" in str(sql):
-            continue
+    for sql in walk_files(root, extensions=(".sql",)):
         try:
             text = sql.read_text().lower()
         except Exception:

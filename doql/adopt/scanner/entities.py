@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 
 from ...parsers.models import DoqlSpec, Entity, EntityField
-from .utils import snake_to_pascal, normalize_python_type, normalize_sqlalchemy_type, normalize_sql_type
+from .utils import snake_to_pascal, normalize_python_type, normalize_sqlalchemy_type, normalize_sql_type, walk_files
 
 # Suffixes that indicate a class is a transient API DTO rather than a
 # persistent domain entity. We strip these from the candidate pool so that
@@ -49,18 +49,16 @@ def _is_excluded_path(path: Path) -> bool:
 
 def scan_entities(root: Path, spec: DoqlSpec) -> None:
     """Detect entities from Python models / schemas or SQL files."""
-    model_files: list[Path] = []
-    for pattern in ("**/models.py", "**/schemas.py", "**/models/*.py"):
-        model_files.extend(root.glob(pattern))
-
     seen: set[str] = set()
-    for mf in model_files:
-        if not _is_excluded_path(mf):
-            _extract_entities_from_python(mf, spec, seen)
 
-    for sql in root.rglob("*.sql"):
-        if not _is_excluded_path(sql):
-            _extract_entities_from_sql(sql, spec, seen)
+    for path in walk_files(root, extensions=(".py", ".sql")):
+        name = path.name
+        if name in ("models.py", "schemas.py") or (path.parent.name == "models" and name.endswith(".py")):
+            if not _is_excluded_path(path):
+                _extract_entities_from_python(path, spec, seen)
+        elif name.endswith(".sql"):
+            if not _is_excluded_path(path):
+                _extract_entities_from_sql(path, spec, seen)
 
 
 def _classify_bases(bases_raw: str) -> tuple[bool, bool]:

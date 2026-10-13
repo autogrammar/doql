@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 
 from ...parsers.models import DoqlSpec, Environment
-from .utils import find_compose, load_yaml
+from .utils import find_compose, load_yaml, walk_files
 
 _SOURCE_ENV_RE = re.compile(
     r'(?:os\.getenv|os\.environ\.get|os\.environ)\(\s*["\']([A-Z][A-Z0-9_]*)["\']'
@@ -74,9 +74,7 @@ def _scan_source_env_refs(root: Path, spec: DoqlSpec) -> None:
     src = root / "src"
     if not src.is_dir():
         return
-    for py_file in src.rglob("*.py"):
-        if any(skip in py_file.parts for skip in ("venv", ".venv", "tests", "__pycache__")):
-            continue
+    for py_file in walk_files(src, extensions=(".py",)):
         try:
             text = py_file.read_text(encoding="utf-8", errors="ignore")
         except OSError:
