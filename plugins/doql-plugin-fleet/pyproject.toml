@@ -14,7 +14,7 @@ authors = [
 ]
 keywords = ["doql", "multi-tenant", "saas", "fleet", "iot"]
 dependencies = [
-  "doql>=0.1.0a1",
+  "doql>=0.1.12",
 ]
 
 [project.entry-points."doql_plugins"]
