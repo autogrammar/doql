@@ -1,0 +1,90 @@
+{
+  "schema": "new-project.intent/v3",
+  "ticket": "ticket-014",
+  "summary": "Update core dependencies to latest minor versions (projan deps)",
+  "workstream": "core",
+  "classification": {
+    "kind": "SERVICE",
+    "priority": "P2",
+    "origin": "health"
+  },
+  "allowedPaths": [
+    "project/ticket-014/**",
+    "TODO.md",
+    "project/TICKETS.md",
+    "packages/cli2doql/pyproject.toml",
+    "packages/dsl2doql/pyproject.toml",
+    "packages/mcp2doql/pyproject.toml",
+    "packages/nlp2doql/pyproject.toml",
+    "packages/rest2doql/pyproject.toml",
+    "packages/uri2doql/pyproject.toml",
+    "plugins/doql-plugin-erp/pyproject.toml",
+    "plugins/doql-plugin-fleet/pyproject.toml",
+    "plugins/doql-plugin-gxp/pyproject.toml",
+    "plugins/doql-plugin-iso17025/pyproject.toml"
+  ],
+  "forbiddenPaths": [
+    "project/ticket-*/user-*.md"
+  ],
+  "stacks": [],
+  "dependsOn": [],
+  "conflictsWith": [],
+  "integrationTicket": null,
+  "delivery": {
+    "acceptedBaseSha": "a3ad9ac7640055b1e85bf2f823d6c4d09748a3ae",
+    "targetBranch": "main",
+    "outcome": "Projan deps rollout: 19 version declaration(s) updated to the newest published minor-level versions; lockfiles re-resolved.",
+    "nonGoals": [
+      "No source code, interface or behaviour changes",
+      "No dependency additions or removals"
+    ],
+    "complexity": "M",
+    "estimatedMinutes": 60,
+    "budgets": {
+      "maxAffectedComponents": 1,
+      "maxImplementationFiles": 9,
+      "maxPublicInterfaceChanges": 0,
+      "maxRuntimeDependencies": 0
+    },
+    "architecture": {
+      "status": "accepted",
+      "decision": "Version declarations are rewritten in place by projan deps with their operators, markers and precision preserved; lockfiles are re-resolved by their own managers.",
+      "components": [
+        {
+          "name": "dependency-manifests",
+          "paths": [
+            "packages/cli2doql/pyproject.toml",
+            "packages/dsl2doql/pyproject.toml",
+            "packages/mcp2doql/pyproject.toml",
+            "packages/nlp2doql/pyproject.toml",
+            "packages/uri2doql/pyproject.toml",
+            "plugins/doql-plugin-erp/pyproject.toml",
+            "plugins/doql-plugin-fleet/pyproject.toml",
+            "plugins/doql-plugin-gxp/pyproject.toml",
+            "plugins/doql-plugin-iso17025/pyproject.toml"
+          ]
+        }
+      ],
+      "responsibilityChanges": false,
+      "interfaceChanges": [],
+      "dataChanges": [],
+      "ui": {
+        "impact": "none",
+        "states": [],
+        "evidence": []
+      },
+      "rollback": "Revert this pull request through protected review."
+    },
+    "runtimeDependencies": [],
+    "validation": [
+      {
+        "criterion": "AC-01",
+        "commands": [
+          "uv pip compile pyproject.toml --quiet --all-extras -o /dev/null",
+          "./project/governance-check.sh"
+        ],
+        "evidence": "Lockfiles re-resolved and resolution verified by projan deps apply"
+      }
+    ]
+  }
+}
