@@ -10,17 +10,17 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
 dependencies = [
-    "doql>=1.0.0",
+    "doql>=1.0.44",
     "uri2doql>=0.1.0",
 ]
 
 [project.optional-dependencies]
 llm = [
-    "jsonschema>=4.21",
+    "jsonschema>=4.26.0",
     "subactor-subllm @ git+https://github.com/subactor/subllm.git@0ba7ceb0da5bb3eb9cc98dd3ea47e8c00ad3ef60",
 ]
-mcp = ["mcp>=1.0"]
-dev = ["pytest>=8.0", "jsonschema>=4.21"]
+mcp = ["mcp>=1.30.0"]
+dev = ["pytest>=8.4.2", "jsonschema>=4.26.0"]
 
 [project.scripts]
 nlp2doql = "nlp2doql.cli:main"
