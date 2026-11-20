@@ -14,7 +14,7 @@ authors = [
 ]
 keywords = ["doql", "gxp", "21-cfr-part-11", "audit-log", "compliance"]
 dependencies = [
-  "doql>=0.1.0a1",
+  "doql>=0.1.12",
 ]
 
 [project.entry-points."doql_plugins"]

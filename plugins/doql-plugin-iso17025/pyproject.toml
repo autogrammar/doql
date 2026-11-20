@@ -14,7 +14,7 @@ authors = [
 ]
 keywords = ["doql", "iso17025", "calibration", "metrology", "compliance"]
 dependencies = [
-  "doql>=0.1.0a1",
+  "doql>=0.1.12",
   "doql-plugin-shared>=0.1.0",
 ]
 

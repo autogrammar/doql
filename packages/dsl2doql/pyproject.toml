@@ -10,13 +10,13 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
 dependencies = [
-    "doql>=1.0.0",
+    "doql>=1.0.44",
     "uri2doql>=0.1.0",
     "nlp2doql>=0.1.0",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0"]
+dev = ["pytest>=8.4.2"]
 
 [project.scripts]
 dsl2doql = "dsl2doql.cli:main"
